@@ -1,17 +1,16 @@
 pipeline {
     agent any
     environment {
-        // Simulamos el nombre de la ciudad y una clave ficticia (que ya no usaremos)
-        CITY = 'Madrid' // Cambia esto por tu ciudad si lo prefieres
+        CITY = 'Madrid' // Ciudad simulada
     }
     stages {
 
         stage('Ejercicio 6 - Clima y Población Actual (Simulado)') {
             steps {
                 script {
-                    // Simulamos los valores de clima y población
+                    // Simulamos el clima y la población
                     def climaSimulado = "Clima soleado, 25°C"
-                    def poblacionSimulada = 5000000 // Población ficticia
+                    def poblacionSimulada = 5000000
 
                     echo "Clima actual en ${env.CITY} (simulado): ${climaSimulado}"
                     echo "Población actual de ${env.CITY} (simulada): ${poblacionSimulada}"
@@ -22,7 +21,7 @@ pipeline {
         stage('Ejercicio 7 - Calcular Población Neta') {
             steps {
                 script {
-                    def poblacionActual = 5000000 // Usamos la misma población simulada
+                    def poblacionActual = 5000000 // Simulación de la población
                     def poblacionNeta = poblacionActual * 0.8
                     def fechaActual = new Date().format('yyyy-MM-dd')
                     def nombreFichero = "poblacion_neta_${fechaActual}.txt"
@@ -36,10 +35,23 @@ pipeline {
         stage('Ejercicio 8 - Operaciones Aritméticas') {
             steps {
                 script {
-                    // Leer archivo que contiene dos números (simulado o desde un archivo real)
-                    def numeros = readFile('numeros.txt').split('\r\n') // Asegúrate de tener un archivo 'numeros.txt'
+                    // Crear el archivo numeros.txt si no existe
+                    writeFile file: 'numeros.txt', text: "100\n200"
+
+                    // Leer el archivo y realizar las operaciones
+                    def numeros = readFile('numeros.txt').split('\r\n')
+
+                    if (numeros.size() < 2) {
+                        error "El archivo numeros.txt debe contener exactamente dos números."
+                    }
+
                     def num1 = numeros[0].toInteger()
                     def num2 = numeros[1].toInteger()
+
+                    // Verificar si el segundo número es cero antes de realizar la división
+                    if (num2 == 0) {
+                        error "División por cero no permitida."
+                    }
 
                     // Realizar operaciones básicas
                     def suma = num1 + num2
