@@ -9,9 +9,9 @@ pipeline {
         stage('Ejercicio 6 - Clima y Población Actual') {
             steps {
                 script {
-                    // Obteniendo clima actual desde una API pública (ejemplo con API de OpenWeatherMap)
+                    // Para Windows, usamos el comando 'curl' de PowerShell o descarga el curl ejecutable para Windows.
                     def climaUrl = "http://api.openweathermap.org/data/2.5/weather?q=${env.CITY}&appid=${env.API_KEY}&units=metric"
-                    def climaResponse = sh(script: "curl ${climaUrl}", returnStdout: true)
+                    def climaResponse = bat(script: "curl ${climaUrl}", returnStdout: true)
                     echo "Clima actual en ${env.CITY}: ${climaResponse}"
 
                     // Obteniendo población actual desde una API pública o mock (ejemplo con datos ficticios)
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     // Leer archivo que contiene dos números
-                    def numeros = readFile('numeros.txt').split('\n')
+                    def numeros = readFile('numeros.txt').split('\r\n') // Para Windows, usa '\r\n'
                     def num1 = numeros[0].toInteger()
                     def num2 = numeros[1].toInteger()
 
