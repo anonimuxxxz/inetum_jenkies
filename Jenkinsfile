@@ -1,7 +1,6 @@
 pipeline {
     agent any
     environment {
-        // Simulación de los datos que no se pueden obtener mediante APIs
         CLIMA_ACTUAL = "Despejado, 25°C"
         POBLACION_ACTUAL = 5000000 // Ejemplo de población actual
     }
