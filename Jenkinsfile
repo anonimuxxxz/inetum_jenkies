@@ -1,22 +1,20 @@
 pipeline {
     agent any
     environment {
-        API_KEY = 'tu_api_key' // Coloca tu API key aquí si necesitas usar una API de clima
-        CITY = 'tu_ciudad' // Cambia esto por tu ciudad
+        // Simulamos el nombre de la ciudad y una clave ficticia (que ya no usaremos)
+        CITY = 'Madrid' // Cambia esto por tu ciudad si lo prefieres
     }
     stages {
 
-        stage('Ejercicio 6 - Clima y Población Actual') {
+        stage('Ejercicio 6 - Clima y Población Actual (Simulado)') {
             steps {
                 script {
-                    // Para Windows, usamos el comando 'curl' de PowerShell o descarga el curl ejecutable para Windows.
-                    def climaUrl = "http://api.openweathermap.org/data/2.5/weather?q=${env.CITY}&appid=${env.API_KEY}&units=metric"
-                    def climaResponse = bat(script: "curl ${climaUrl}", returnStdout: true)
-                    echo "Clima actual en ${env.CITY}: ${climaResponse}"
+                    // Simulamos los valores de clima y población
+                    def climaSimulado = "Clima soleado, 25°C"
+                    def poblacionSimulada = 5000000 // Población ficticia
 
-                    // Obteniendo población actual desde una API pública o mock (ejemplo con datos ficticios)
-                    def poblacionActual = 5000000 // Simula la población o usa una API real
-                    echo "Población actual de ${env.CITY}: ${poblacionActual}"
+                    echo "Clima actual en ${env.CITY} (simulado): ${climaSimulado}"
+                    echo "Población actual de ${env.CITY} (simulada): ${poblacionSimulada}"
                 }
             }
         }
@@ -24,7 +22,7 @@ pipeline {
         stage('Ejercicio 7 - Calcular Población Neta') {
             steps {
                 script {
-                    def poblacionActual = 5000000 // Simula o recupera desde API real
+                    def poblacionActual = 5000000 // Usamos la misma población simulada
                     def poblacionNeta = poblacionActual * 0.8
                     def fechaActual = new Date().format('yyyy-MM-dd')
                     def nombreFichero = "poblacion_neta_${fechaActual}.txt"
@@ -38,8 +36,8 @@ pipeline {
         stage('Ejercicio 8 - Operaciones Aritméticas') {
             steps {
                 script {
-                    // Leer archivo que contiene dos números
-                    def numeros = readFile('numeros.txt').split('\r\n') // Para Windows, usa '\r\n'
+                    // Leer archivo que contiene dos números (simulado o desde un archivo real)
+                    def numeros = readFile('numeros.txt').split('\r\n') // Asegúrate de tener un archivo 'numeros.txt'
                     def num1 = numeros[0].toInteger()
                     def num2 = numeros[1].toInteger()
 
