@@ -19,7 +19,7 @@ pipeline {
                     def resta = num1 - num2
                     def multiplicacion = num1 * num2
                     def division = num1 / num2
-                    def potencia = Math.pow(num1, num2)
+                    def potencia = num1 ** num2 // Cambiado aquí
 
                     // Mostrar resultados en consola
                     echo "Suma: ${suma}"
@@ -79,7 +79,7 @@ pipeline {
         stage('Informar usuario') {
             steps {
                 script {
-                    def user = sh(script: "Antonio Serrano", returnStdout: true).trim()
+                    def user = sh(script: "AntnioSerrano", returnStdout: true).trim()
                     echo "Tarea ejecutada por el usuario: ${user}"
                 }
             }
