@@ -1,92 +1,103 @@
 pipeline {
     agent any
-
+    environment {
+        FICHERO = "C:\\Users\\antonio.serrano\\valores.txt"  // Ruta al archivo valores.txt
+        SALIDA = "C:\\Users\\antonio.serrano\\salida.txt"    // Archivo de salida donde se guardarán los resultados
+    }
     stages {
-        stage('Declarative: Checkout SCM') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Operaciones matemáticas') {
+        stage('Lunes - Calcular Poblacion Final') {
             steps {
                 script {
-                    def a = 10
-                    def b = 5
-                    def suma = a + b
-                    def resta = a - b
-                    def multiplicacion = a * b
-                    def division = a / b
-                    def potencia = Math.pow(a, b)
-
-                    echo "Suma: ${suma}"
-                    echo "Resta: ${resta}"
-                    echo "Multiplicación: ${multiplicacion}"
-                    echo "División: ${division}"
-                    echo "Potencia: ${potencia}"
-
-                    // Escribimos los resultados en un archivo
-                    writeFile file: 'resultado.txt', text: """Suma: ${suma}
-                    Resta: ${resta}
-                    Multiplicación: ${multiplicacion}
-                    División: ${division}
-                    Potencia: ${potencia}"""
+                    def lineas = readFile(env.FICHERO).readLines()
+                    def valorLinea0 = lineas[0] as Float
+                    def calcularPoblacionFinal = valorLinea0 * 0.80
+                    echo "Lunes: Población Final calculada: ${calcularPoblacionFinal}"
+ 
+                    // Leer contenido actual del archivo antes de escribir
+                    def contenido = fileExists(env.SALIDA) ? readFile(env.SALIDA) : ""
+                    contenido += "Lunes: Poblacion Final: ${calcularPoblacionFinal}\n"
+                    writeFile file: env.SALIDA, text: contenido
                 }
             }
         }
-
-        stage('Clonar repositorio') {
-            steps {
-                git 'https://github.com/anonimuxxxz/inetum_jenkies'
-            }
-        }
-
-        stage('Ejecutar Maven goals') {
+ 
+        stage('Martes - Operaciones Aritméticas') {
             steps {
                 script {
-                    echo "Ejecutando tests..."
-
-                    // Verificamos si estamos en Unix o Windows
-                    if (isUnix()) {
-                        sh 'mvn clean test' // Comando para Unix
-                    } else {
-                        bat 'mvn clean test' // Comando para Windows
-                    }
+                    def lineas = readFile(env.FICHERO).readLines()
+                    def valorLinea1 = lineas[1] as Float
+                    def valorLinea2 = lineas[2] as Float
+ 
+                    def suma = valorLinea1 + valorLinea2
+                    def resta = valorLinea1 - valorLinea2
+                    def multiplicacion = valorLinea1 * valorLinea2
+                    def division = valorLinea1 / valorLinea2
+ 
+                    echo "Martes: Suma: ${suma}, Resta: ${resta}, Multiplicación: ${multiplicacion}, División: ${division}"
+ 
+                    def contenido = fileExists(env.SALIDA) ? readFile(env.SALIDA) : ""
+                    contenido += "Martes: Suma: ${suma}, Resta: ${resta}, Multiplicación: ${multiplicacion}, División: ${division}\n"
+                    writeFile file: env.SALIDA, text: contenido
                 }
             }
         }
-
-        stage('Copiar y leer archivo') {
+ 
+        stage('Miércoles - Convertir Temperatura') {
             steps {
                 script {
-                    // Verificamos si estamos en Unix o Windows para copiar el archivo
-                    if (isUnix()) {
-                        sh 'cp resultado.txt destino.txt' // Comando Unix
-                        sh 'cat destino.txt' // Leer el archivo copiado en Unix
-                    } else {
-                        bat 'copy resultado.txt destino.txt' // Comando Windows
-                        bat 'type destino.txt' // Leer el archivo copiado en Windows
-                    }
+                    def lineas = readFile(env.FICHERO).readLines()
+                    def tempF = lineas[3] as Float
+ 
+                    def tempC = (tempF - 32) * 5 / 9
+                    echo "Miércoles: Temperatura en Celsius: ${tempC}"
+ 
+                    def contenido = fileExists(env.SALIDA) ? readFile(env.SALIDA) : ""
+                    contenido += "Miércoles: Temperatura en Celsius: ${tempC}\n"
+                    writeFile file: env.SALIDA, text: contenido
                 }
             }
         }
-
-        stage('Informar usuario') {
+ 
+        stage('Jueves - Informar Usuario') {
             steps {
-                echo "¡Pipeline completado correctamente!"
+                script {
+                    // Ejecutar comando en Windows usando 'bat' en lugar de 'sh'
+                    def usuario = bat(script: 'whoami', returnStdout: true).trim()
+                   echo "El usuario del PC es: ${env.USERNAME}" // Esto mostrará el nombre de usuario
+ 
+                    def contenido = fileExists(env.SALIDA) ? readFile(env.SALIDA) : ""
+                    contenido += "Jueves: Usuario que ejecuta el pipeline: ${usuario}\n"
+                    writeFile file: env.SALIDA, text: contenido
+                }
+            }
+        }
+ 
+              stage('Viernes - Crear Proyecto Maven') {
+            steps {
+                script {
+                    // Descargar el proyecto básico de Maven y compilarlo
+                    bat '''
+                    curl -o project.zip https://start.spring.io/starter.zip ^
+                        -d dependencies=mysql ^
+                        -d type=maven-project ^
+                        -d language=java ^
+                        -d packaging=jar ^
+                        -d javaVersion=11
+            
+                    powershell -Command "Expand-Archive -Path 'project.zip' -DestinationPath '.'"
+                    cd proyecto_maven
+                    mvn clean install
+                    '''
+                    echo "Viernes: Proyecto Maven creado y compilado con éxito"
+                }
             }
         }
     }
-
     post {
         always {
-            echo 'El pipeline ha finalizado.'
-        }
-        success {
-            echo 'El pipeline fue exitoso.'
-        }
-        failure {
-            echo 'El pipeline ha fallado.'
+            script {
+                echo "Pipeline completado. Revisa el archivo ${env.SALIDA} para los resultados."
+            }
         }
     }
 }
