@@ -2,15 +2,13 @@ pipeline {
     agent any
 
     environment {
-        // Definir las variables globales necesarias
         CLONE_URL = "https://github.com/anonimuxxxz/inetum_jenkies"
         BRANCH = "main"
         OUTPUT_FILE = "output.txt"
     }
 
     stages {
-        stage('Día Lunes - Operaciones matemáticas') {
-            when { expression { return isDayOfWeek('Monday') } }
+        stage('Operaciones matemáticas') {
             steps {
                 script {
                     def num1 = 10
@@ -30,7 +28,7 @@ pipeline {
                     echo "División: ${division}"
                     echo "Potencia: ${potencia}"
 
-                    // Generar un archivo con la información del día lunes
+                    // Generar un archivo con la información
                     writeFile file: "${OUTPUT_FILE}", text: """
                         Operaciones matemáticas:
                         Suma: ${suma}
@@ -43,16 +41,14 @@ pipeline {
             }
         }
 
-        stage('Día Martes - Clonar repositorio') {
-            when { expression { return isDayOfWeek('Tuesday') } }
+        stage('Clonar repositorio') {
             steps {
                 // Clonar el repositorio de la rama principal
                 git branch: "${BRANCH}", url: "${CLONE_URL}"
             }
         }
 
-        stage('Día Miércoles - Ejecutar Maven goals') {
-            when { expression { return isDayOfWeek('Wednesday') } }
+        stage('Ejecutar Maven goals') {
             steps {
                 script {
                     // Ejecutar los tests
@@ -66,11 +62,10 @@ pipeline {
             }
         }
 
-        stage('Día Jueves - Copiar y leer archivo generado el Miércoles') {
-            when { expression { return isDayOfWeek('Thursday') } }
+        stage('Copiar y leer archivo') {
             steps {
                 script {
-                    // Copiar el archivo generado el día miércoles
+                    // Copiar el archivo generado
                     def destination = 'copied_output.txt'
                     sh "cp ${OUTPUT_FILE} ${destination}"
 
@@ -81,19 +76,13 @@ pipeline {
             }
         }
 
-        stage('Día Viernes - Informar usuario que ejecutó la tarea') {
-            when { expression { return isDayOfWeek('Friday') } }
+        stage('Informar usuario') {
             steps {
                 script {
-                    def user = sh(script: "whoami", returnStdout: true).trim()
+                    def user = sh(script: "Antonio Serrano", returnStdout: true).trim()
                     echo "Tarea ejecutada por el usuario: ${user}"
                 }
             }
         }
     }
-}
-
-def isDayOfWeek(day) {
-    def currentDay = new Date().format('EEEE', TimeZone.getTimeZone('GMT'))
-    return currentDay == day
 }
